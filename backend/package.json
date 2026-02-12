@@ -1,0 +1,25 @@
+{
+  "name": "ecomm-backend",
+  "version": "1.0.0",
+  "description": "Backend for a general  purpose ecomm application",
+  "keywords": [
+    "first",
+    "firststack",
+    "MERN"
+  ],
+  "homepage": "https://github.com/tianshen3/ecommerce#readme",
+  "bugs": {
+    "url": "https://github.com/tianshen3/ecommerce/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tianshen3/ecommerce.git"
+  },
+  "license": "ISC",
+  "author": "Bhavesh",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
