@@ -16,6 +16,12 @@ const userSchema = new Schema({
         lowercase: true,
         index: true,
     },
+    fullName: {
+        type: String,
+        required: true,
+        trim: true,
+        index: true,
+    },
     profilePhoto: {
         type: String, //cloudinary url
     },
