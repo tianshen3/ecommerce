@@ -26,6 +26,7 @@
     "prettier": "^3.8.1"
   },
   "dependencies": {
-    "cloudinary": "^2.9.0"
+    "cloudinary": "^2.9.0",
+    "mongoose": "^9.2.1"
   }
 }
