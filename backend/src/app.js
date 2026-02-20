@@ -20,7 +20,7 @@ app.use(express.json({
 }));
 
 //allowing the inforamation from the url and the limiting its size
-app.use(express.urlendcoded({
+app.use(express.urlencoded({
     extended : true,
     limit : "16kb",
 }));
@@ -30,5 +30,11 @@ app.use(express.static("public"));
 
 //gain access to cookies and allow the transfer of access and refresh token to the frontend from the user controller
 app.use(cookieParser());
+
+//api endpoints
+import userRouter from "./routes/user.routes.js";
+
+
+app.use("/api/v1/users", userRouter)
 
 export {app};
