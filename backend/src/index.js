@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config({
-    path: './env'
+    path: '../.env'
 });
+console.log("ENV VALUE:", process.env.MONGODB_URI);
 
 import { app } from "./app.js";
 import connectDB from "./db/index.js";
@@ -12,7 +13,7 @@ connectDB()
 .then(() =>{
     //the server is listening at following ports for the req
     //if prod gives port use it or else use the development/local port
-    const PORT = process.env.PORT || 5000;
+    const PORT = process.env.PORT || 5000;    
     app.listen(PORT, () =>{
         console.log(`Server is Running at port: ${PORT}`);
     })
