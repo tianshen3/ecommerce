@@ -42,4 +42,17 @@ const userSchema = new Schema({
 //as in the case of cartData so in order to keep it we turn off the minimize property
 {minimize: false});
 
+//Mongoose "pre-save" middlerware hook for password encryption
+userSchema.pre("save", async function() {
+    //"this" is used to refer to current user document being saved
+    //if password is not being modified return early
+    if(!this.isModified("password")) return;
+
+    this.password = await bcrypt.hash(this.password, 10);
+
+});
+
 export const User = mongoose.model("User", userSchema);
+//the User is a model created on the basis of the userSchema
+//it is an object which knows, which collection in Mongodb it corresponds to(users) && what the scehma of a user looks like
+//mongodb doesnt know about schema or validations it stores just json like documents
