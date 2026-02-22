@@ -26,7 +26,7 @@ const productSchema = new Schema({
         required: true,
     },
     sizes: {
-        type: String,
+        type: Array,
         required: true,
     },
     bestSeller: {
