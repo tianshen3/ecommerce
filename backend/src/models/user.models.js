@@ -55,7 +55,7 @@ userSchema.pre("save", async function() {
 });
 
 //Method to generate refresh token
-userSchema.methods.generateRefreshTokens = function (){
+userSchema.methods.generateRefreshToken = function (){
     return jwt.sign(
         {
             _id: this._id,
@@ -72,6 +72,9 @@ userSchema.methods.generateAccessToken = function() {
     return jwt.sign(
         {
             _id: this._id,
+            email: this.email,
+            username: this.username,
+            fullName: this.fullName
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
@@ -79,6 +82,13 @@ userSchema.methods.generateAccessToken = function() {
         }
     )
 }
+
+//Method to check for the correct password
+//async and await because this takes time to check the password sent and passwod present
+//because of encryption and decryption
+userSchema.methods.isPasswordCorrect = async function(password){
+    return await bcrypt.compare(password, this.password)
+};
 
 export const User = mongoose.model("User", userSchema);
 //the User is a model created on the basis of the userSchema
