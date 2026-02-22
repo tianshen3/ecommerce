@@ -2,6 +2,30 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.models.js";
+
+//generating access and refresh tokens
+const generateAccessAndRefreshToken = async(userId) => {
+    try {
+        const user = await User.findById(userId);
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+
+        //we will use refreshToken to login user instead of credentials 
+        //hence we will keep the refresh token in the user document till it expires which is long duration
+        user.refreshToken = refreshToken;
+
+        //since we have only created and updated refreshToken we need not validate or check the entire usermodel before saving
+        //doing so will causer error because we are not saving the required fields
+        await user.save({ validateBeforeSave : false});
+
+        return {accessToken, refreshToken};
+
+    } catch(error){
+        throw new ApiError(500, "Something went wrong while generating access and refresh tokens");
+    }
+
+}
+
 //route for user registeration
 const registerUser = asyncHandler(async(req, res) => {
     
@@ -48,6 +72,9 @@ const registerUser = asyncHandler(async(req, res) => {
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
     );
+    if(!createdUser) {
+        throw new ApiError(500, "Something went wrong while creating new user");
+    }
 
     //Upon Successfull Creation 
     return res.status(201).json(
