@@ -52,6 +52,32 @@ userSchema.pre("save", async function() {
 
 });
 
+//Method to generate refresh token
+userSchema.methods.generateRefreshTokens = function (){
+    return jwt.sign(
+        {
+            _id: this._id,
+        },
+        process.env.REFRESH_TOKEN_SECRET,
+        {
+            expiresIn : process.env.REFRESH_TOKEN_EXPIRY
+        }
+    )
+}
+
+//Method to generate access token
+userSchema.methods.generateAccessToken = function() {
+    return jwt.sign(
+        {
+            _id: this._id,
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn : process.env.ACCESS_TOKEN_EXPIRY            
+        }
+    )
+}
+
 export const User = mongoose.model("User", userSchema);
 //the User is a model created on the basis of the userSchema
 //it is an object which knows, which collection in Mongodb it corresponds to(users) && what the scehma of a user looks like
