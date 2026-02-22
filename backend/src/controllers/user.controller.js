@@ -17,10 +17,11 @@ const generateAccessAndRefreshToken = async(userId) => {
         //since we have only created and updated refreshToken we need not validate or check the entire usermodel before saving
         //doing so will causer error because we are not saving the required fields
         await user.save({ validateBeforeSave : false});
-
+        
         return {accessToken, refreshToken};
 
     } catch(error){
+        
         throw new ApiError(500, "Something went wrong while generating access and refresh tokens");
     }
 
@@ -84,6 +85,58 @@ const registerUser = asyncHandler(async(req, res) => {
 
 //route for user login
 const loginUser = asyncHandler(async(req, res) => {
+    //take the data from the user body
+    const {username, email, password} = req.body;
+
+    //check for the existence of username or email
+    if(!(username && password)){
+        throw new ApiError(400, "Username or Email is required");
+    }
+
+    //finding the user in the database and if not found throw an error  
+    const user = await User.findOne({
+        $or: [{username}, {email}]
+    });
+    if(!user){
+        throw new ApiError(401, "User does not exist");
+    }
+
+    //if user of such credentials found then check whether the password matches or not
+    //because this finds authority to access the user
+    const isPasswordValid = await user.isPasswordCorrect(password);
+    if(!isPasswordValid){
+        throw new ApiError(401, "Invalid User Credentials");
+    }
+
+    //if password matches then generate tokens and send back the accessToken and keep the refreshToken in db
+    //when called the generate function, the function ensures that the refreshToken is already stored in db
+    const{accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
+
+    //creating a new user instance which is send as a response and is without password and refreshToken
+    const loggedInUser = await User.findById(user._id).select(
+        "-password -refreshToken" 
+    );
+
+    //sending the  tokens in the cookies
+    const options = {
+        httpOnly : true,
+        secure : true
+    }
+
+    //finally a logged in response
+    return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(
+            200,
+            {
+                user : loggedInUser, accessToken, refreshToken
+            },
+            "User logged in Successfully"
+        )
+    );
 
 });
 
