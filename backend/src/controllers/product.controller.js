@@ -67,6 +67,25 @@ const addProduct = asyncHandler(async(req, res) => {
 //listing products
 const listProducts = asyncHandler(async(req, res) =>{
 
+    //this a type of get request of the all the products in the product collection of database
+    const products = await Product.find({}).select(
+        "-createdAt -updatedAt"
+    );
+
+    //checking the existence of this object
+    if(!products){
+        throw new ApiError(400, "Product collection is empty");
+    }
+
+    console.log(products);
+    //returning a response
+    return res.status(201).json(
+        new ApiResponse(
+            200,
+            products,
+            "This is the list of all the products in the database"
+        )
+    )
 });
 
 //removing a product
