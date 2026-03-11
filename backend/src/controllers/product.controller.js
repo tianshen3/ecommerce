@@ -120,6 +120,21 @@ const removeProduct = asyncHandler(async(req, res) =>{
 //all information of a single product
 const infoProduct = asyncHandler(async(req, res) =>{
 
+    //checking the existence of the product
+    const { productId } = req.body;
+    const prod = await Product.findById(productId);
+    if(!prod){
+        throw new ApiError(400, "Product does not exist");
+    }
+
+    //if exist send the response
+    return res.status(201).json(
+        new ApiResponse(
+            200,
+            prod,
+            "Product information fetched successfully"
+        )
+    )
 });
 
 export {
