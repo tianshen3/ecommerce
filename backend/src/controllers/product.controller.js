@@ -91,6 +91,30 @@ const listProducts = asyncHandler(async(req, res) =>{
 //removing a product
 const removeProduct = asyncHandler(async(req, res) =>{
 
+    //checking existence of the product
+    const prodB = await Product.findById(req.body.id);
+    if(!prodB)
+    {
+        throw new ApiError(400, "The Product does not exist");
+    }
+
+    //if the prodcut exists
+    await Product.findByIdAndDelete(req.body.id);
+
+    //check existence after deletion
+    const prodA = await Product.findById(req.body.id);
+    if(prodA){
+        throw new ApiError(500, "Failed to delete the Product from the database");
+    }
+
+    //send success response
+    return res.status(201).json(
+        new ApiResponse(
+            200,
+            "",
+            "Product Removed Successfully",
+        )
+    )
 });
 
 //all information of a single product
