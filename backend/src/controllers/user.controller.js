@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.models.js";
+import jwt from "jsonwebtoken";
 
 //generating access and refresh tokens
 const generateAccessAndRefreshToken = async(userId) => {
@@ -140,7 +141,37 @@ const loginUser = asyncHandler(async(req, res) => {
 
 });
 
+//route for admin login
+const adminLogin = asyncHandler(async(req, res) =>{
+
+    //take info from request body
+    const {username, email, password } = req.body
+
+    //checking the existence of the username or email
+    if(!(username && email)){
+        throw new ApiError(400, "adminUsername and adminEmail is required");
+    }
+
+    //checking if these username or email match the enviroment variables
+    if(email===process.env.ADMIN_EMAIL && password===process.env.ADMIN_PASSWORD && username===process.env.ADMIN_USERNAME)
+    {
+        const token = jwt.sign(email+password, process.env.ACCESS_TOKEN_SECRET);
+        return res.status(201)
+        .json(
+            new ApiResponse(
+                200,
+                token,
+                "Admin Authentication token generated successfully"
+            )
+        );
+    }
+    else{
+        throw new ApiError(400, "admin credentials do not match");
+    }
+});
+
 export {
     registerUser,
     loginUser,
+    adminLogin
 };
