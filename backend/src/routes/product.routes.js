@@ -6,11 +6,13 @@ import {
     infoProduct
 } from "../controllers/product.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { adminAuth } from "../middlewares/adminAuth.middleware.js";
 
 const router = Router();
 
 //product adding route
 router.route("/addProduct").post(
+    adminAuth,
     upload.fields([
         {
             name : "image1",
@@ -36,7 +38,10 @@ router.route("/addProduct").post(
 router.route("/listProducts").get(listProducts);
 
 //product removing route
-router.route("/removeProduct").post(removeProduct);
+router.route("/removeProduct").post(
+    adminAuth,
+    removeProduct
+);
 
 //product information route
 router.route("/infoProduct").post(infoProduct);
