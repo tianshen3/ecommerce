@@ -9,7 +9,9 @@ function Navbar() {
 
     return (
         <div className="flex items-center justify-between ">
-            <img src={assets.cart_icon} className="w-10" alt="logo"/>
+            <Link to="/">
+                <img src={assets.cart_icon} className="w-10" alt="logo"/>
+            </Link>
             <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
 
                 <NavLink to="/" className="flex flex-col items-center gap-1">
