@@ -6,7 +6,7 @@ import ProductItem from '../components/ProductItem.jsx';
 
 function Collection(){
 
-  const {products} = useContext(ShopContext);
+  const {products, search, showSearch } = useContext(ShopContext);
 
   const [showFilter, setShowFilter] = useState(true);
   const [filterProducts, setFilterProducts] = useState([]);
@@ -40,6 +40,10 @@ function Collection(){
   function applyFilter() {
     let productsCopy = products.slice();
 
+    if(showSearch && search){
+      productsCopy = productsCopy.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
+    }
+    
     if(category.length>0){
       //the products get added to the new productsCopy array only when
       //the items of the of the productsCopy array have the category which is included in the catgeory usestate array
@@ -74,7 +78,7 @@ function Collection(){
   
   useEffect(()=>{
     applyFilter();
-  },[category, subCategory]);
+  },[category, subCategory, search, showSearch]);
 
   useEffect(()=>{
     sortProduct();
