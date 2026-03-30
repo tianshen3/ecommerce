@@ -29,7 +29,7 @@ const productSchema = new Schema({
         type: Array,
         required: true,
     },
-    bestSeller: {
+    bestseller: {
         type: Boolean,
     }
 }, {timestamps : true});

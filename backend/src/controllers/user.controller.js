@@ -5,7 +5,7 @@ import { User } from "../models/user.models.js";
 import jwt from "jsonwebtoken";
 
 //generating access and refresh tokens
-const generateAccessAndRefreshToken = async(userId) => {
+const generateAccessAndRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
         const accessToken = user.generateAccessToken();
@@ -17,22 +17,22 @@ const generateAccessAndRefreshToken = async(userId) => {
 
         //since we have only created and updated refreshToken we need not validate or check the entire usermodel before saving
         //doing so will causer error because we are not saving the required fields
-        await user.save({ validateBeforeSave : false});
-        
-        return {accessToken, refreshToken};
+        await user.save({ validateBeforeSave: false });
 
-    } catch(error){
-        
+        return { accessToken, refreshToken };
+
+    } catch (error) {
+
         throw new ApiError(500, "Something went wrong while generating access and refresh tokens");
     }
 
 }
 
 //route for user registeration
-const registerUser = asyncHandler(async(req, res) => {
-    
+const registerUser = asyncHandler(async (req, res) => {
+
     //get user detail from frontend or postman which is present in req body 
-    const {fullName, email, username, password} = req.body;
+    const { fullName, email, username, password } = req.body;
     console.log("Name :", fullName);
     console.log("Username :", username);
     console.log("Email:", email);
@@ -40,7 +40,7 @@ const registerUser = asyncHandler(async(req, res) => {
 
     //validating the unwrapped data
     //this says in the array if any field after trimming is empty then throw apierror
-    if([fullName, email, username, password].some((field) => field?.trim() === "")){
+    if ([fullName, email, username, password].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "All fields required")
     }
 
@@ -51,9 +51,9 @@ const registerUser = asyncHandler(async(req, res) => {
     //mongodb search the db and return a raw json 
     //this raw json is wrapped by mongoose
     const existedUser = await User.findOne({
-        $or:[{ username }, { email }]
+        $or: [{ username }, { email }]
     });
-    if(existedUser){
+    if (existedUser) {
         throw new ApiError(409, "Username or Email, already exists");
     }
 
@@ -62,10 +62,10 @@ const registerUser = asyncHandler(async(req, res) => {
     //User.create method creates the user object and at the same time save it in db
     // "user" object is a Mongoose document instance representing the newly saved MongoDB document.
     const user = await User.create({
-        username : username.toLowerCase(),
+        username: username.toLowerCase(),
         email,
         fullName,
-        profilePhoto : "",
+        profilePhoto: "",
         password,
     })
 
@@ -74,7 +74,7 @@ const registerUser = asyncHandler(async(req, res) => {
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
     );
-    if(!createdUser) {
+    if (!createdUser) {
         throw new ApiError(500, "Something went wrong while creating new user");
     }
 
@@ -85,87 +85,86 @@ const registerUser = asyncHandler(async(req, res) => {
 });
 
 //route for user login
-const loginUser = asyncHandler(async(req, res) => {
+const loginUser = asyncHandler(async (req, res) => {
     //take the data from the user body
-    const {username, email, password} = req.body;
+    const { username, email, password } = req.body;
 
     //check for the existence of username or email
-    if(!(username && password)){
+    if (!(username && password)) {
         throw new ApiError(400, "Username or Email is required");
     }
 
     //finding the user in the database and if not found throw an error  
     const user = await User.findOne({
-        $or: [{username}, {email}]
+        $or: [{ username }, { email }]
     });
-    if(!user){
+    if (!user) {
         throw new ApiError(401, "User does not exist");
     }
 
     //if user of such credentials found then check whether the password matches or not
     //because this finds authority to access the user
     const isPasswordValid = await user.isPasswordCorrect(password);
-    if(!isPasswordValid){
+    if (!isPasswordValid) {
         throw new ApiError(401, "Invalid User Credentials");
     }
 
     //if password matches then generate tokens and send back the accessToken and keep the refreshToken in db
     //when called the generate function, the function ensures that the refreshToken is already stored in db
-    const{accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
     //creating a new user instance which is send as a response and is without password and refreshToken
     const loggedInUser = await User.findById(user._id).select(
-        "-password -refreshToken" 
+        "-password -refreshToken"
     );
 
     //sending the  tokens in the cookies
     const options = {
-        httpOnly : true,
-        secure : true
+        httpOnly: true,
+        secure: true
     }
 
     //finally a logged in response
     return res
-    .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json(
-        new ApiResponse(
-            200,
-            {
-                user : loggedInUser, accessToken, refreshToken
-            },
-            "User logged in Successfully"
-        )
-    );
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new ApiResponse(
+                200,
+                {
+                    user: loggedInUser, accessToken, refreshToken
+                },
+                "User logged in Successfully"
+            )
+        );
 
 });
 
 //route for admin login
-const adminLogin = asyncHandler(async(req, res) =>{
+const adminLogin = asyncHandler(async (req, res) => {
 
     //take info from request body
-    const {username, email, password } = req.body
+    const { email, password } = req.body
 
     //checking the existence of the username or email
-    if(!(username && email)){
-        throw new ApiError(400, "adminUsername and adminEmail is required");
+    if (!(email && password)) {
+        throw new ApiError(400, "adminEmail and adminPassword is required");
     }
 
     //checking if these username or email match the enviroment variables
-    if(email===process.env.ADMIN_EMAIL && password===process.env.ADMIN_PASSWORD && username===process.env.ADMIN_USERNAME)
-    {
-        const token = jwt.sign(email+password, process.env.ACCESS_TOKEN_SECRET);
+    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+        const token = jwt.sign(email + password, process.env.ACCESS_TOKEN_SECRET);
         return res.status(201)
-        .json(
-            new ApiResponse(
-                200,
-                token,
-                "Admin Authentication token generated successfully"
-            )
-        );
+            .json(
+                new ApiResponse(
+                    200,
+                    token,
+                    "Admin Authentication token generated successfully"
+                )
+            );
     }
-    else{
+    else {
         throw new ApiError(400, "admin credentials do not match");
     }
 });
