@@ -7,7 +7,7 @@ import { Product } from "../models/product.models.js";
 //Adding product;
 const addProduct = asyncHandler(async(req, res) => {
     // getting the product details
-    const {name, description, price, category, subCategory, sizes, bestSeller} = req.body;
+    const {name, description, price, category, subCategory, sizes, bestseller} = req.body;
 
     //getting images' multer file descriptor object instance
     const image1 = req.files.image1 && req.files?.image1[0];
@@ -40,7 +40,7 @@ const addProduct = asyncHandler(async(req, res) => {
         category,
         price: Number(price),
         subCategory,
-        bestSeller: bestSeller === "true" ? true : false,
+        bestseller: bestseller === "true" ? true : false,
         sizes: JSON.parse(sizes),
         image: imagesUrl,
         date: Date.now(),
