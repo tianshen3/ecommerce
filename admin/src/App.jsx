@@ -10,6 +10,8 @@ import Orders from "./pages/Orders.jsx";
 
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL
+export const currency = "$";
+
 function App() {
 
   const[token, setToken] = useState(localStorage.getItem("token") ? localStorage.getItem("token") : "");
