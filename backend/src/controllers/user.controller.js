@@ -32,15 +32,14 @@ const generateAccessAndRefreshToken = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
 
     //get user detail from frontend or postman which is present in req body 
-    const { fullName, email, username, password } = req.body;
+    const { fullName, email, password } = req.body;
     console.log("Name :", fullName);
-    console.log("Username :", username);
     console.log("Email:", email);
     console.log("Password : ", password);
 
     //validating the unwrapped data
     //this says in the array if any field after trimming is empty then throw apierror
-    if ([fullName, email, username, password].some((field) => field?.trim() === "")) {
+    if ([fullName, email, password].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "All fields required")
     }
 
@@ -50,11 +49,11 @@ const registerUser = asyncHandler(async (req, res) => {
     //mongodb knows which collection to search becuase "User" model maps to "users" collection 
     //mongodb search the db and return a raw json 
     //this raw json is wrapped by mongoose
-    const existedUser = await User.findOne({
-        $or: [{ username }, { email }]
-    });
+    const existedUser = await User.findOne(
+        { email }
+    );
     if (existedUser) {
-        throw new ApiError(409, "Username or Email, already exists");
+        throw new ApiError(409, "Email, already exists");
     }
 
     //creating user using given properties and saving it
@@ -62,7 +61,7 @@ const registerUser = asyncHandler(async (req, res) => {
     //User.create method creates the user object and at the same time save it in db
     // "user" object is a Mongoose document instance representing the newly saved MongoDB document.
     const user = await User.create({
-        username: username.toLowerCase(),
+        // username: username.toLowerCase(),
         email,
         fullName,
         profilePhoto: "",
@@ -78,25 +77,28 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Something went wrong while creating new user");
     }
 
-    //Upon Successfull Creation 
+    //generating token so the user is automatically logged in after registration
+    const { accessToken } = await generateAccessAndRefreshToken(user._id);
+
+    //Upon Successfull Creation — return token so frontend can store it
     return res.status(201).json(
-        new ApiResponse(200, createdUser, "User Registered Successfully")
+        new ApiResponse(200, { token: accessToken }, "User Registered Successfully")
     );
 });
 
 //route for user login
 const loginUser = asyncHandler(async (req, res) => {
     //take the data from the user body
-    const { username, email, password } = req.body;
+    const { email, password } = req.body;
 
     //check for the existence of username or email
-    if (!(username && password)) {
+    if (!(email && password)) {
         throw new ApiError(400, "Username or Email is required");
     }
 
     //finding the user in the database and if not found throw an error  
     const user = await User.findOne({
-        $or: [{ username }, { email }]
+        email
     });
     if (!user) {
         throw new ApiError(401, "User does not exist");
@@ -113,27 +115,15 @@ const loginUser = asyncHandler(async (req, res) => {
     //when called the generate function, the function ensures that the refreshToken is already stored in db
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
-    //creating a new user instance which is send as a response and is without password and refreshToken
-    const loggedInUser = await User.findById(user._id).select(
-        "-password -refreshToken"
-    );
 
-    //sending the  tokens in the cookies
-    const options = {
-        httpOnly: true,
-        secure: true
-    }
-
-    //finally a logged in response
+    //finally a logged in response — return token in same format as register
     return res
         .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
         .json(
             new ApiResponse(
                 200,
                 {
-                    user: loggedInUser, accessToken, refreshToken
+                    token: accessToken
                 },
                 "User logged in Successfully"
             )
