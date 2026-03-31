@@ -12,7 +12,7 @@ function LatestCollection() {
     //executed once when the component mounts
     useEffect(() => {
         setLatestProducts(products.slice(0,10));
-    },[]);
+    },[products]);
 
   
   return (
