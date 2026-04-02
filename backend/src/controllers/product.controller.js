@@ -77,7 +77,7 @@ const listProducts = asyncHandler(async(req, res) =>{
         throw new ApiError(400, "Product collection is empty");
     }
 
-    console.log(products);
+    
     //returning a response
     return res.status(201).json(
         new ApiResponse(
