@@ -45,6 +45,16 @@ function ShopContextProvider(props) {
         }
 
         setCartItems(cartData);
+
+        if(token){
+            try {
+                
+                await axios.post(backendUrl+"/api/v1/cart/add",{itemId, size}, {headers : {token}});
+            } catch (error) {
+                console.log(error);
+                toast.error(error.message);
+            }
+        }
     };
 
     //for displaying as the subscript in the carticon of navbar
@@ -75,6 +85,16 @@ function ShopContextProvider(props) {
         cartData[itemId][size] = quantity;
 
         setCartItems(cartData);
+
+        if(token){
+            try {
+                await axios.post(backendUrl+"/api/v1/cart/update", {itemId, size, quantity}, {headers: {token}});
+            } catch (error) {
+                console.log(error);
+                toast.error(error.message);
+            }
+
+        }
     }
 
     function getCartAmount(){
@@ -110,6 +130,20 @@ function ShopContextProvider(props) {
         }
     }
 
+    const getUserCart = async(token)=>{
+        try {
+            
+            const response = await axios.post(backendUrl+"/api/v1/cart/get",{}, {headers: {token}});
+            if(response.data.success){
+                setCartItems(response.data.data);
+                
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message);
+        }
+    };
+
     useEffect(()=>{
         getProductsData();
     },[]);
@@ -117,6 +151,7 @@ function ShopContextProvider(props) {
     useEffect(()=>{
         if(!token && localStorage.getItem("token")){
             setToken(localStorage.getItem("token"));
+            getUserCart(localStorage.getItem("token"));
         }
     },[]);
     
