@@ -52,7 +52,7 @@ const placeOrderRazorpay = asyncHandler(async (req, res) => {
 const allOrders = asyncHandler(async (req, res) => {
 
     const orders = await Order.find({});
-    
+
     return res
         .status(200)
         .json(
@@ -92,7 +92,23 @@ const userOrders = asyncHandler(async (req, res) => {
 
 //updating order status from admin panel for a particular user
 const updateStatus = asyncHandler(async (req, res) => {
+    
+    const{orderId, status} = req.body;
+    
+    const updatedOrderInstance = await Order.findByIdAndUpdate(orderId, {status}, {returnDocument: "after"});
+    if(updatedOrderInstance.status!==status){
+        throw new ApiError(400, "Status not updated");
+    }
 
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                updatedOrderInstance,
+                "Status Updated Successfully"
+            )
+        )
 });
 
 export {
