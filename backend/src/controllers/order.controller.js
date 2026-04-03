@@ -51,6 +51,17 @@ const placeOrderRazorpay = asyncHandler(async (req, res) => {
 //order data for admin panel
 const allOrders = asyncHandler(async (req, res) => {
 
+    const orders = await Order.find({});
+    
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                orders,
+                "All orders fetched successfully"
+            )
+        )
 });
 
 //order data for a particular user
