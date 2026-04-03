@@ -7,9 +7,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 //adding product to user cart
 const addToCart = asyncHandler(async(req, res)=>{
 
-    const { _id, itemId, size} = req.body;
+    const { userId, itemId, size} = req.body;
 
-    const userData = await User.findById(_id);
+    const userData = await User.findById(userId);
     if(!userData)
     {
         throw new ApiError(400, "User does not exist");
@@ -35,7 +35,7 @@ const addToCart = asyncHandler(async(req, res)=>{
     }
 
     //checking the whether the quantity is updated or not;
-    const aUser = await User.findByIdAndUpdate(_id, {cartData});
+    const aUser = await User.findByIdAndUpdate(userId, {cartData});
     const bUser = await User.findById(aUser._id);
     if(bUser.cartData[itemId][size]!=qnt){
         throw new ApiError(100, "Failed to Add Product to the Cart");
@@ -55,9 +55,9 @@ const addToCart = asyncHandler(async(req, res)=>{
 //update user cart
 const updateCart = asyncHandler(async(req, res)=>{
 
-    const {_id, itemId, size, quantity} = req.body;
+    const {userId, itemId, size, quantity} = req.body;
 
-    const userData = await User.findById(_id);
+    const userData = await User.findById(userId);
     if(!userData)
     {
         throw new ApiError(400, "User does not exist");
@@ -68,7 +68,7 @@ const updateCart = asyncHandler(async(req, res)=>{
     cartData[itemId][size] = quantity;
 
     //checking the whether the quantity is updated or not;
-    const aUser = await User.findByIdAndUpdate(_id, {cartData});
+    const aUser = await User.findByIdAndUpdate(userId, {cartData});
     const bUser = await User.findById(aUser._id);
     if(bUser.cartData[itemId][size]!=quantity){
         throw new ApiError(100, "Failed to Update Quantity of the Item");
@@ -89,8 +89,8 @@ const updateCart = asyncHandler(async(req, res)=>{
 //get user cart data
 const getUserCart = asyncHandler(async(req, res)=>{
 
-    const {_id} = req.body;
-     const userData = await User.findById(_id);
+    const {userId} = req.body;
+     const userData = await User.findById(userId);
     if(!userData)
     {
         throw new ApiError(400, "User does not exist");
