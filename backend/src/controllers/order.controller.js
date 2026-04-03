@@ -56,6 +56,27 @@ const allOrders = asyncHandler(async (req, res) => {
 //order data for a particular user
 const userOrders = asyncHandler(async (req, res) => {
 
+    const {userId} = req.body;
+
+    //i am checking for all the orders made by this user
+    //i am looking for all the documents in order collection which have userId equal to that of this user
+    //there Order.find returns and array of all the relevant documents
+    const orders = await Order.find({userId});
+    if(orders.length===0){
+        throw new ApiError(400, "No orders exist");
+    }
+    
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                orders,
+                "Order fetched successfully"
+            )
+        )
+
+
 });
 
 //updating order status from admin panel for a particular user
