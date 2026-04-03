@@ -4,7 +4,7 @@ import {
     getUserCart,
     updateCart
 } from "../controllers/cart.controller.js";
-import authUser from "../middlewares/userAuth.middleware.js";
+import {authUser} from "../middlewares/userAuth.middleware.js";
 
 const router = Router();
 
