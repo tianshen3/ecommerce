@@ -100,14 +100,14 @@ function ShopContextProvider(props) {
     function getCartAmount(){
         let totalAmount = 0;
         for(const items in cartItems){
-            let itemInfo = products.find((product)=>product._id === items);
+            let itemInfo = products.find((product)=>product._id === items)
             for(const item in cartItems[items]){
                 try {
                     if(cartItems[items][item] >0){
                         totalAmount += itemInfo.price * cartItems[items][item];
                     }
                 } catch (error) {
-                    
+                    console.log(error);
                 }
             }
         }
@@ -158,7 +158,7 @@ function ShopContextProvider(props) {
     const value = {
         products, currency, delivery_fee,
         search, setSearch, showSearch, setShowSearch,
-        cartItems, addToCart, getCartCount, 
+        cartItems, addToCart, getCartCount, setCartItems,
         updateQuantity, getCartAmount,
         navigate, backendUrl,
         token, setToken,
