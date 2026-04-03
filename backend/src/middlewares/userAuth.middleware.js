@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 
-const authUser = asyncHandler(async(req, res, next)=>{
+export const authUser = asyncHandler(async(req, res, next)=>{
 
     const {token} = req.headers;
     if(!token){
@@ -12,7 +12,7 @@ const authUser = asyncHandler(async(req, res, next)=>{
     try {
         
         const token_decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        req.body._id = token_decoded._id;
+        req.body.userId = token_decoded._id;
         next();
 
     } catch (error) {
@@ -20,4 +20,3 @@ const authUser = asyncHandler(async(req, res, next)=>{
     }
 });
 
-export default authUser;
