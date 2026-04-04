@@ -1,0 +1,8 @@
+// ignore all the files within this file
+/.vscode
+/node_modules
+./dist
+
+*.env
+.env
+.env.*
