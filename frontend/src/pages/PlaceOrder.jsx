@@ -73,6 +73,18 @@ function PlaceOrder() {
             toast.error(response.data.message);
           }
           break;
+        
+        //API Call for Stripe Payment Gateway
+        case "stripe":
+          const responseStripe = await axios.post(backendUrl + "/api/v1/order/stripe", orderData, {headers : {token}})
+          if(responseStripe.data.success){
+            const session_url = responseStripe.data.data;
+            window.location.replace(session_url);
+          }
+          else{
+            toast.error(response.data.message);
+          }
+          break;
 
         default:
           break;
