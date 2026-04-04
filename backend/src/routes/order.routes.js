@@ -7,6 +7,7 @@ import {
     userOrders,
     updateStatus,
     verifyStipe,
+    verifyRazorpay,
 } from "../controllers/order.controller.js";
 import { adminAuth } from "../middlewares/adminAuth.middleware.js";
 import { authUser } from "../middlewares/userAuth.middleware.js";
@@ -50,6 +51,11 @@ router.route("/userorders").post(
 router.route("/verifyStripe").post(
     authUser,
     verifyStipe
+)
+
+router.route("/verifyRazorpay").post(
+    authUser,
+    verifyRazorpay
 )
 
 export default router;
