@@ -12,6 +12,7 @@ import Orders from "./pages/Orders.jsx"
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import SearchBar from './components/SearchBar.jsx';
+import Verify from './pages/Verify.jsx';
 import { ToastContainer, toast } from 'react-toastify';
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/place-order" element={<PlaceOrder />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/verify" element={<Verify/>} />
       </Routes>
       <Footer />
     </div>
