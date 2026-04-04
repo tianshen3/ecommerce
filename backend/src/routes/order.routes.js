@@ -6,6 +6,7 @@ import {
     allOrders,
     userOrders,
     updateStatus,
+    verifyStipe,
 } from "../controllers/order.controller.js";
 import { adminAuth } from "../middlewares/adminAuth.middleware.js";
 import { authUser } from "../middlewares/userAuth.middleware.js";
@@ -44,6 +45,12 @@ router.route("/userorders").post(
    authUser,   
    userOrders
 );
+
+//Post Payment Procedure
+router.route("/verifyStripe").post(
+    authUser,
+    verifyStipe
+)
 
 export default router;
 
