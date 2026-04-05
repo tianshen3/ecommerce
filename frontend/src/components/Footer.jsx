@@ -8,7 +8,7 @@ function Footer() {
         <div className="flex flex-col sm:grid grid-cols-[3fr_1fr_1fr] gap-14 my-10 mt-40 text-sm">
 
             <div>
-                <img src={assets.cart_icon} className="mb-5 w-32" alt="logo"/>
+                <img src={assets.logo} className="mb-5 w-32" alt="logo"/>
                 <p className="w-full md:w-2/3 text-gray-600">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint incidunt qui consequatur dolor magni repudiandae fuga, reprehenderit deserunt. Tenetur obcaecati cupiditate saepe pariatur laboriosam accusantium nisi mollitia commodi temporibus voluptas!
                 </p>
