@@ -42,4 +42,19 @@ app.use("/api/v1/product", productRouter)
 app.use("/api/v1/cart", cartRouter)
 app.use("/api/v1/order", orderRouter)
 
+//global error handler — catches errors forwarded by asyncHandler via next(error)
+//must have 4 parameters so Express recognises it as an error-handling middleware
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Something went wrong";
+
+    return res.status(statusCode).json({
+        statusCode,
+        data: null,
+        message,
+        success: false,
+        errors: err.errors || [],
+    });
+});
+
 export {app};
