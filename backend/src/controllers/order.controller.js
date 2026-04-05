@@ -108,12 +108,12 @@ const placeOrderStripe = asyncHandler(async (req, res) => {
             )
     } catch (error) {
         console.log(error);
-        throw ApiError(402, error.message);
+        throw new ApiError(402, error.message);
     }
 });
 
 //verify stripe payment
-const verifyStipe = asyncHandler(async (req, res) => {
+const verifyStripe = asyncHandler(async (req, res) => {
 
     const { orderId, success, userId } = req.body;
 
@@ -311,6 +311,6 @@ export {
     allOrders,
     userOrders,
     updateStatus,
-    verifyStipe,
+    verifyStripe,
     verifyRazorpay
 }

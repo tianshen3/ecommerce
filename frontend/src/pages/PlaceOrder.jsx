@@ -107,7 +107,7 @@ function PlaceOrder() {
             window.location.replace(session_url);
           }
           else{
-            toast.error(response.data.message);
+            toast.error(responseStripe.data.message);
           }
           break;
 

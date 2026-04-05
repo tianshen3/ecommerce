@@ -66,7 +66,7 @@ const registerUser = asyncHandler(async (req, res) => {
         fullName,
         profilePhoto: "",
         password,
-        cartData,
+        cartData: {},
     })
 
     //checking if the "user" is created succesfully in database or not
