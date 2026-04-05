@@ -18,9 +18,9 @@ function Navbar() {
     }
 
     return (
-        <div className="flex items-center justify-between ">
+        <div className="flex items-center justify-between py-5 sticky top-0 z-50 bg-white/70 backdrop-blur-md">
             <Link to="/">
-                <img src={assets.logo} className="w-10" alt="" />
+                <img src={assets.logo} className="w-36" alt="" />
             </Link>
             <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
 
