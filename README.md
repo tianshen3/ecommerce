@@ -4,6 +4,11 @@ A fully functional, responsive e-commerce web application built using the MERN s
 
 This project features a customer-facing storefront for browsing and purchasing products, and a secured admin dashboard for managing inventory and tracking orders.
 
+## 👀 Live Demos
+- **🛒 Customer Storefront:** [https://ecommerce-psi-ten-51.vercel.app](https://ecommerce-psi-ten-51.vercel.app)
+- **⚙️ Admin Dashboard:** [https://ecommerce-admin-wine-zeta.vercel.app/](https://ecommerce-admin-wine-zeta.vercel.app/)
+
+
 ## 🌟 Features
 
 ### Customer Storefront (`frontend`)
